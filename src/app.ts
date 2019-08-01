@@ -1,5 +1,6 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
+import * as morgan from "morgan";
 import Controller from "./interfaces/controller.interface";
 import "dotenv/config";
 import * as mongoose from "mongoose";
@@ -18,8 +19,9 @@ class App {
 
   private initializeMiddlewares() {
     console.log("this.initializeMiddlewares called --------");
-    // this.app.use(bodyParser.urlencoded({ extended: false }));
+    this.app.use(bodyParser.urlencoded({ extended: false }));
     this.app.use(bodyParser.json());
+    this.app.use(morgan("dev"));
   }
 
   private initializeErrorHandling() {
@@ -39,11 +41,11 @@ class App {
   }
 
   private connectToTheDatabase() {
-    const { MONGO_PATH, PORT } = process.env;
-    console.log("******", MONGO_PATH);
+    const { HOST, M_DB_PORT, PORT } = process.env;
+    console.log("******", HOST, M_DB_PORT);
     console.log("PORT : ", PORT);
 
-    mongoose.connect(`mongodb://localhost:27017/new_db`, {
+    mongoose.connect(`mongodb://${HOST}:${M_DB_PORT}/new_db`, {
       useNewUrlParser: true
     });
   }
