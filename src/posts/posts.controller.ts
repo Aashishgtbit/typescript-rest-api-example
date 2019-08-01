@@ -5,29 +5,20 @@ import Controller from "../interfaces/controller.interface";
 import PostNotFoundException from "../exceptions/PostNotFoundException";
 
 class PostsController {
-  public path = "/posts";
   public router = express.Router();
   private post = postModel;
-  private posts: Post[] = [
-    {
-      author: "Marcin",
-      content: "Deori fdur ffdf",
-      title: "Best Times"
-    }
-  ];
 
   constructor() {
     this.initializeRoutes();
   }
 
   public initializeRoutes() {
-    this.router.get(this.path, this.getAllPosts);
-    this.router.get(`${this.path}/:id`, this.getPostById);
-    this.router.put(`${this.path}/:id`, this.modifyPost);
-    this.router.delete(`${this.path}/:id`, this.deletePost);
-    this.router.post(this.path, this.createAPost);
+    this.getAllPosts;
+    this.createAPost;
+    this.deletePost;
+    this.getPostById;
   }
-  private getAllPosts = (
+  public getAllPosts = (
     request: express.Request,
     response: express.Response
   ) => {
@@ -43,7 +34,7 @@ class PostsController {
       });
   };
 
-  private getPostById = (
+  public getPostById = (
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
@@ -63,7 +54,7 @@ class PostsController {
       });
   };
 
-  private modifyPost = (
+  public modifyPost = (
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
@@ -84,13 +75,11 @@ class PostsController {
       });
   };
 
-  private createAPost = (
+  public createAPost = (
     request: express.Request,
     response: express.Response
   ) => {
-    console.log("inside createPost/ ");
     const postData: Post = request.body;
-    console.log("-------", postData);
     const createdPost = new this.post(postData);
     createdPost
       .save()
@@ -105,7 +94,7 @@ class PostsController {
       });
   };
 
-  private deletePost = (
+  public deletePost = (
     request: express.Request,
     response: express.Response,
     next: express.NextFunction

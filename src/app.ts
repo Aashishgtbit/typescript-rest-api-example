@@ -1,7 +1,8 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as morgan from "morgan";
-import Controller from "./interfaces/controller.interface";
+import userRoutes from "./routes/user.routes";
+import postRoutes from "./routes/posts.routes";
 import "dotenv/config";
 import * as mongoose from "mongoose";
 import errorMiddleware from "./middleware/error.middleware";
@@ -9,11 +10,11 @@ import errorMiddleware from "./middleware/error.middleware";
 class App {
   public app: express.Application;
 
-  constructor(controllers: Controller[]) {
+  constructor() {
     this.app = express();
     this.connectToTheDatabase();
     this.initializeMiddlewares();
-    this.initializeControllers(controllers);
+    this.initializeControllers();
     this.initializeErrorHandling();
   }
 
@@ -28,10 +29,9 @@ class App {
     this.app.use(errorMiddleware);
   }
 
-  private initializeControllers(controllers) {
-    controllers.forEach(controller => {
-      this.app.use("/", controller.router);
-    });
+  private initializeControllers() {
+    this.app.use("/user/", userRoutes);
+    this.app.use("/posts/", postRoutes);
   }
 
   public listen() {

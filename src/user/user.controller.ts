@@ -1,17 +1,12 @@
 import * as express from "express";
 import User from "./user.interface";
 import userModel from "./user.model";
-import Controller from "../interfaces/controller.interface";
-import PostNotFoundException from "../exceptions/PostNotFoundException";
-import ErrorMiddleWare from "../middleware/error.middleware";
-import HttpException from "../exceptions/HttpException";
-
+import "dotenv/config";
 import * as mongoose from "mongoose";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 
 class UserController {
-  public path = "/user";
   public router = express.Router();
   private user = userModel;
   private User: User;
@@ -21,13 +16,11 @@ class UserController {
   }
 
   public initializeRoutes() {
-    console.log("path  : ", this.path);
-    this.router.post(`${this.path}/login`, this.userLogin);
-    // this.router.delete(`${this.path}/:id`, this.deleteUser);
-    this.router.post(`${this.path}/signup`, this.createUser);
+    this.userLogin;
+    this.createUser;
   }
 
-  private userLogin = (
+  public userLogin = (
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
@@ -56,7 +49,7 @@ class UserController {
                   email: result[0].email,
                   userId: result[0]._id
                 },
-                "MySecretKey",
+                process.env.SECURITY_VALUE,
                 { expiresIn: "2h" }
               );
               return response.status(200).json({
@@ -77,7 +70,7 @@ class UserController {
       });
   };
 
-  private createUser = (
+  public createUser = (
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
