@@ -20,99 +20,93 @@ class UserController {
     this.createUser;
   }
 
-  public userLogin = (
+  public userLogin = async (
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
   ) => {
-    this.user
-      .find({ email: request.body.email })
-      .exec()
-      .then(result => {
-        if (result.length < 1) {
+    try {
+      const res = await this.user.find({ email: request.body.email }).exec();
+      if (res.length < 1) {
+        const err = new Error("Auth failed");
+        return response.status(401).json({
+          error: err
+        });
+      }
+      bcrypt.compare(request.body.password, res[0].password, (err, result) => {
+        if (err) {
           return response.status(401).json({
-            error: "Auth Failed"
+            error: " Auth failed "
           });
         }
-        bcrypt.compare(
-          request.body.password,
-          result[0].password,
-          (err, res) => {
-            if (err) {
-              return response.status(401).json({
-                error: "Auth failed ."
-              });
-            }
-            if (res) {
-              const token = jwt.sign(
-                {
-                  email: result[0].email,
-                  userId: result[0]._id
-                },
-                process.env.SECURITY_VALUE,
-                { expiresIn: "2h" }
-              );
-              return response.status(200).json({
-                message: "Auth Successful .",
-                token: token
-              });
-            }
-            response.status(401).json({
-              Error: "Auth Failed"
-            });
-          }
-        );
-      })
-      .catch(err => {
-        response.status(500).json({
-          Error: err
-        });
+        if (result) {
+          const token = jwt.sign(
+            {
+              email: res[0].email,
+              userId: res[0]._id
+            },
+            process.env.SECURITY_VALUE,
+            { expiresIn: "2h" }
+          );
+          return response.status(200).json({
+            message: "Auth Successful .",
+            token: token
+          });
+        }
       });
+    } catch (err) {
+      console.log(err);
+      response.status(500).json({
+        error: err
+      });
+    }
   };
 
-  public createUser = (
+  public createUser = async (
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
   ) => {
-    this.user
-      .find({ email: request.body.email })
-      .exec()
-      .then(user => {
-        if (user.length >= 1) {
-          response.status(409).json({
-            message: "Email already registered ."
-          });
-        } else {
-          bcrypt.hash(request.body.password, 10, (err, hash) => {
-            if (err) {
+    try {
+      const res = await this.user.find({ email: request.body.email }).exec();
+      if (res.length >= 1) {
+        response.status(409).json({
+          message: "Email already registered"
+        });
+      } else {
+        bcrypt.hash(request.body.password, 10, async (err, hash) => {
+          if (err) {
+            response.status(500).json({
+              err: err
+            });
+          } else {
+            const newUser = new this.user({
+              _id: new mongoose.Types.ObjectId(),
+              email: request.body.email,
+              password: hash
+            });
+
+            try {
+              const savedUser = await newUser.save();
+              if (savedUser) {
+                response.status(201).json({
+                  message: "user Created ",
+                  response: savedUser
+                });
+              }
+            } catch (err) {
               response.status(500).json({
                 error: err
               });
-            } else {
-              const newUser = new this.user({
-                _id: new mongoose.Types.ObjectId(),
-                email: request.body.email,
-                password: hash
-              });
-              newUser
-                .save()
-                .then(result => {
-                  console.log(result);
-                  response.status(201).json({
-                    message: "User Created ",
-                    response: result
-                  });
-                })
-                .catch(err => {
-                  response.status(500).json({
-                    error: err
-                  });
-                });
             }
-          });
-        }
+          }
+        });
+      }
+    } catch (err) {
+      response.status(500).json({
+        error: err
       });
+    }
   };
 }
 

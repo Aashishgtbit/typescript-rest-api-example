@@ -18,100 +18,95 @@ class PostsController {
     this.deletePost;
     this.getPostById;
   }
-  public getAllPosts = (
+  public getAllPosts = async (
     request: express.Request,
     response: express.Response
   ) => {
-    this.post
-      .find()
-      .then(posts => {
-        response.send(posts);
-      })
-      .catch(err => {
-        response.sendStatus(500).json({
-          Error: err
-        });
+    try {
+      const res = await this.post.find();
+      if (res) {
+        response.send(res);
+      }
+    } catch (err) {
+      response.sendStatus(500).json({
+        error: err
       });
+    }
   };
 
-  public getPostById = (
+  public getPostById = async (
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
   ) => {
     const id = request.params.id;
-    this.post
-      .findById(id)
-      .then(post => {
-        if (post) {
-          response.send(post);
-        } else {
-          next(new PostNotFoundException(id));
-        }
-      })
-      .catch(err => {
-        console.log("Error :", err);
-      });
+    try {
+      const res = await this.post.findById(id);
+      if (res) {
+        response.send(res);
+      } else {
+        const err = new Error(id);
+        throw err;
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  public modifyPost = (
+  public modifyPost = async (
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
   ) => {
     const id = request.params.id;
     const postData: Post = request.body;
-    this.post
-      .findByIdAndUpdate(id, postData, { new: true })
-      .then(post => {
-        if (post) {
-          response.send(post);
-        } else {
-          next(new PostNotFoundException(id));
-        }
-      })
-      .catch(err => {
-        console.log("Error : ", err);
+    try {
+      const res = await this.post.findByIdAndUpdate(id, postData, {
+        new: true
       });
+      if (res) {
+        response.send(res);
+      } else {
+        const err = new Error(id);
+        throw err;
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  public createAPost = (
+  public createAPost = async (
     request: express.Request,
     response: express.Response
   ) => {
     const postData: Post = request.body;
     const createdPost = new this.post(postData);
-    createdPost
-      .save()
-      .then(savedPost => {
-        console.log(savedPost);
+    try {
+      const savedPost = await createdPost.save();
+      if (savedPost) {
         response.send(savedPost);
-      })
-      .catch(err => {
-        response.sendStatus(500).json({
-          Error: err
-        });
+      }
+    } catch (err) {
+      response.sendStatus(500).json({
+        error: err
       });
+    }
   };
 
-  public deletePost = (
+  public deletePost = async (
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
   ) => {
     const id = request.params.id;
-    this.post
-      .findByIdAndDelete(id)
-      .then(succesResponse => {
-        if (succesResponse) {
-          response.send(200);
-        } else {
-          next(new PostNotFoundException(id));
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    try {
+      const res = await this.post.findByIdAndDelete(id);
+      if (res) {
+        response.send(200);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 }
 
