@@ -1,8 +1,8 @@
 import * as express from "express";
+import * as httpStatus from "http-status";
 import Post from "./post.interface";
 import postModel from "./post.model";
-import Controller from "../interfaces/controller.interface";
-import PostNotFoundException from "../exceptions/PostNotFoundException";
+import HttpException from "../exceptions/HttpException";
 
 class PostsController {
   public router = express.Router();
@@ -20,17 +20,22 @@ class PostsController {
   }
   public getAllPosts = async (
     request: express.Request,
-    response: express.Response
+    response: express.Response,
+    next: express.NextFunction
   ) => {
     try {
       const res = await this.post.find();
       if (res) {
-        response.send(res);
+        let msg = {
+          message: " Post fetched Successfully",
+          data: res,
+          httpStatus: httpStatus.OK
+        };
+        response.status(httpStatus.OK).json(msg);
       }
     } catch (err) {
-      response.sendStatus(500).json({
-        error: err
-      });
+      let message: string = "Error while fetching Posts .";
+      return next(new HttpException(httpStatus.NOT_FOUND, message));
     }
   };
 
@@ -43,13 +48,19 @@ class PostsController {
     try {
       const res = await this.post.findById(id);
       if (res) {
-        response.send(res);
+        let msg = {
+          message: "Post fetched successfully ",
+          data: res,
+          httpStatus: httpStatus.OK
+        };
+        response.status(httpStatus.OK).json(msg);
       } else {
-        const err = new Error(id);
-        throw err;
+        let message: string = "Post not found .";
+        return next(new HttpException(httpStatus.NOT_FOUND, message));
       }
     } catch (err) {
-      console.log(err);
+      let message: string = "Post not found .";
+      return next(new HttpException(httpStatus.NOT_FOUND, message));
     }
   };
 
@@ -65,31 +76,41 @@ class PostsController {
         new: true
       });
       if (res) {
-        response.send(res);
+        let msg = {
+          message: "Post Updated Successfully",
+          httpStatus: httpStatus.OK
+        };
+        response.status(httpStatus.OK).json(msg);
       } else {
         const err = new Error(id);
         throw err;
       }
     } catch (err) {
-      console.log(err);
+      let message: string = "Post update failed .";
+      return next(new HttpException(httpStatus.FORBIDDEN, message));
     }
   };
 
   public createAPost = async (
     request: express.Request,
-    response: express.Response
+    response: express.Response,
+    next: express.NextFunction
   ) => {
     const postData: Post = request.body;
     const createdPost = new this.post(postData);
     try {
       const savedPost = await createdPost.save();
       if (savedPost) {
-        response.send(savedPost);
+        let msg = {
+          message: "Post saved to database",
+          data: savedPost,
+          httpStatus: httpStatus.OK
+        };
+        response.status(httpStatus.OK).json(msg);
       }
     } catch (err) {
-      response.sendStatus(500).json({
-        error: err
-      });
+      let message: string = " server Error something went wrong . ";
+      return next(new HttpException(httpStatus.INTERNAL_SERVER_ERROR, message));
     }
   };
 
@@ -102,10 +123,15 @@ class PostsController {
     try {
       const res = await this.post.findByIdAndDelete(id);
       if (res) {
-        response.send(200);
+        let msg = {
+          message: "Post deleted Successfully .",
+          httpStatus: httpStatus.OK
+        };
+        response.status(httpStatus.OK).json(msg);
       }
     } catch (err) {
-      console.log(err);
+      let message: string = "Post not deleted try again .";
+      return next(new HttpException(httpStatus.INTERNAL_SERVER_ERROR, message));
     }
   };
 }

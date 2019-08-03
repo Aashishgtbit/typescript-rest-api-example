@@ -1,3 +1,4 @@
+import * as httpStatus from "http-status";
 class HttpException extends Error {
   status: number;
   message: string;
