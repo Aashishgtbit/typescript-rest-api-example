@@ -6,6 +6,7 @@ import postRoutes from "./routes/posts.routes";
 import "dotenv/config";
 import * as mongoose from "mongoose";
 import errorMiddleware from "./middleware/error.middleware";
+import { Db } from "mongodb";
 
 class App {
   public app: express.Application;
@@ -41,13 +42,16 @@ class App {
   }
 
   private connectToTheDatabase() {
-    const { HOST, M_DB_PORT, PORT } = process.env;
+    const { HOST, M_DB_PORT, PORT, M_USERNAME, M_PASSWORD } = process.env;
     console.log("******", HOST, M_DB_PORT);
     console.log("PORT : ", PORT);
 
-    mongoose.connect(`mongodb://${HOST}:${M_DB_PORT}/new_db`, {
-      useNewUrlParser: true
-    });
+    mongoose.connect(
+      `mongodb://${M_USERNAME}:${M_PASSWORD}@${HOST}:${M_DB_PORT}/my_db`,
+      {
+        useNewUrlParser: true
+      }
+    );
   }
 }
 
