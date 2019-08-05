@@ -1,6 +1,7 @@
 import * as path from "path";
 
 module.exports = {
+  target: "node",
   entry: "./src/server.ts",
   devtool: "inline-source-map",
   module: {

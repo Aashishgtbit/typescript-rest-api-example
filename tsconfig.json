@@ -3,6 +3,7 @@
     "module": "commonjs" /* to compile the project in nodejs .*/,
     "sourceMap": true,
     "target": "es2017",
+    "moduleResolution": "node",
     "outDir": "./dist" /* location where the compile js files get stored .*/,
     "baseUrl": "./src"
   },
