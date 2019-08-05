@@ -6,7 +6,6 @@ import postRoutes from "./routes/posts.routes";
 import "dotenv/config";
 import * as mongoose from "mongoose";
 import errorMiddleware from "./middleware/error.middleware";
-import { Db } from "mongodb";
 
 class App {
   public app: express.Application;
@@ -23,7 +22,7 @@ class App {
     console.log("this.initializeMiddlewares called --------");
     this.app.use(bodyParser.urlencoded({ extended: false }));
     this.app.use(bodyParser.json());
-    this.app.use(morgan("dev"));
+    this.app.use(morgan("dev")); /* To print the api calls to the console . */
   }
 
   private initializeErrorHandling() {
