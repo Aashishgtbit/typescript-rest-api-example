@@ -25,14 +25,15 @@ class PostsController {
   ) => {
     try {
       const res = await this.post.find();
+      //check if the res Array is empty
       if (res.length == 0) {
         console.log("post has no data .");
         let msg = {
-          message: "Post is empty .",
+          message: "There is no posts yet . Write your post .",
           data: res,
-          httpStatus: httpStatus.NO_CONTENT
+          httpStatus: httpStatus.OK
         };
-        return response.status(httpStatus.NO_CONTENT).json(msg);
+        return response.status(httpStatus.OK).json(msg);
       }
       if (res.length > 0) {
         console.log("Post has data ");
