@@ -25,7 +25,17 @@ class PostsController {
   ) => {
     try {
       const res = await this.post.find();
-      if (res) {
+      if (res.length == 0) {
+        console.log("post has no data .");
+        let msg = {
+          message: "Post is empty .",
+          data: res,
+          httpStatus: httpStatus.NO_CONTENT
+        };
+        return response.status(httpStatus.NO_CONTENT).json(msg);
+      }
+      if (res.length > 0) {
+        console.log("Post has data ");
         let msg = {
           message: " Post fetched Successfully",
           data: res,
