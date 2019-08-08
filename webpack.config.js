@@ -1,23 +1,28 @@
-import * as path from "path";
+// import * as path from "path";
+var path = require("path");
+var nodeExternals = require("webpack-node-externals");
 
+console.log("webpack config called .");
 module.exports = {
   target: "node",
   entry: "./src/server.ts",
   devtool: "inline-source-map",
+  externals: [nodeExternals()],
   module: {
     rules: [
       {
-        test: /\.tsx?$/ /* To make the project support jsx . */,
-        use: "ts-loader",
-        exclude: /node_modules/
+        test: /\.(js|ts)$/,
+        exclude: /node_modules/,
+        // exclude: /node_modules\/(?!(ts-loader\/node_modules\/micromatch\/index.js))/,
+        use: ["babel-loader", "ts-loader"]
       }
     ]
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js"]
+    extensions: [".ts", ".js"]
   },
   output: {
-    filename: "bundle.js",
-    path: path.resolve(__dirname, "dist")
+    path: path.resolve(__dirname, "dist"),
+    filename: "bundle.js"
   }
 };

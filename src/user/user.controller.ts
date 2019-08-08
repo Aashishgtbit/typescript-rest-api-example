@@ -7,6 +7,7 @@ import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import * as httpStatus from "http-status";
 import HttpException from "../exceptions/HttpException";
+import userJoiSchema from "../user/user.validation";
 class UserController {
   public router = express.Router();
   private user = userModel;
@@ -66,6 +67,18 @@ class UserController {
     next: express.NextFunction
   ) => {
     try {
+      userJoiSchema.validate(
+        request.body,
+        { presence: "required" },
+        (err: string, value) => {
+          if (err) {
+            let message: string = err;
+            return next(new HttpException(httpStatus.BAD_REQUEST, message));
+          } else {
+            console.log(value);
+          }
+        }
+      );
       const res = await this.user.find({ email: request.body.email }).exec();
       if (res.length >= 1) {
         let message: string = "Email already registered";

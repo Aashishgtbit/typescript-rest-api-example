@@ -1,4 +1,5 @@
 import * as mongoose from "mongoose";
+import Media from "../media/media.interface";
 
 /**
  * @User @interface is used to provide the type to the Post object .
@@ -12,6 +13,7 @@ interface User {
   _id: mongoose.Types.ObjectId;
   email: string;
   password: string;
+  img: Media;
 }
 
 export default User;
