@@ -1,16 +1,11 @@
-import * as mongoose from "mongoose";
-import ImageData from "./media.image.interface";
-
 /**
  * @Media @interface is used to provide the type to the Media object .
  * @Media object will contain fields
- * @_id of type mongoose.Types.ObjectId
- * @img of type @ImageData
+ * @img of type @string[]
  */
 
 interface Media {
-  _id: mongoose.Types.ObjectId;
-  img: ImageData;
+  images: string[];
 }
 
 export default Media;

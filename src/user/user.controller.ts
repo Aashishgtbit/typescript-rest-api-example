@@ -118,6 +118,44 @@ class UserController {
       return next(new HttpException(httpStatus.INTERNAL_SERVER_ERROR, message));
     }
   };
+
+  public addImage = async (
+    request: express.Request,
+    response: express.Response,
+    next: express.NextFunction
+  ) => {
+    try {
+      console.log(response.locals.userData);
+      const userId: mongoose.Types.ObjectId = response.locals.userData.userId;
+      let file: Express.Multer.File = await request.file;
+      if (file) {
+        let img_path: string = file.destination + "/" + file.filename;
+
+        try {
+          const updateUser = await this.user
+            .update({ _id: userId }, { $push: { img: img_path } })
+            .exec();
+          if (updateUser) {
+            return response.send(updateUser);
+          }
+        } catch (err) {
+          return response.send({
+            message: "User update failed ",
+            status: httpStatus.UNAVAILABLE_FOR_LEGAL_REASONS
+          });
+        }
+        return response.json({
+          result: "file uploaded successfully",
+          fileObj: file
+        });
+      }
+    } catch (err) {
+      return response.json({
+        result: "file not uploaded",
+        message: "err"
+      });
+    }
+  };
 }
 
 export default UserController;

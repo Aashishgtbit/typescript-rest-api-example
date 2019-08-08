@@ -13,7 +13,7 @@ interface User {
   _id: mongoose.Types.ObjectId;
   email: string;
   password: string;
-  img: Media;
+  img: string[];
 }
 
 export default User;

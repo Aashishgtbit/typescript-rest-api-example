@@ -1,4 +1,5 @@
 import * as Joi from "@hapi/joi";
+import ImageData from "../media/media.interface";
 
 const userJoiSchema = Joi.object().keys({
   email: Joi.string()
