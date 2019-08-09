@@ -1,6 +1,6 @@
 import * as express from "express";
 import UserController from "../user/user.controller";
-import checkAuth from "../middleware/chekAuth";
+import checkAuth from "../middleware/checkAuth";
 import upload from "../media/media.upload";
 
 /**

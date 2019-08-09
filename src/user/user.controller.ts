@@ -130,6 +130,7 @@ class UserController {
       let file: Express.Multer.File = await request.file;
       if (file) {
         let img_path: string = file.destination + "/" + file.filename;
+        // let img_path: string = request.protocol + "";
 
         try {
           const updateUser = await this.user
@@ -139,21 +140,19 @@ class UserController {
             return response.send(updateUser);
           }
         } catch (err) {
-          return response.send({
-            message: "User update failed ",
-            status: httpStatus.UNAVAILABLE_FOR_LEGAL_REASONS
-          });
+          let message: string = "Image upload failed ";
+          return next(new HttpException(httpStatus.NOT_MODIFIED, message));
         }
-        return response.json({
-          result: "file uploaded successfully",
-          fileObj: file
-        });
+        let msg = {
+          message: " File uploaded Successfully . ",
+          response: file,
+          httpStatus: httpStatus.OK
+        };
+        return response.status(httpStatus.OK).json(msg);
       }
     } catch (err) {
-      return response.json({
-        result: "file not uploaded",
-        message: "err"
-      });
+      let message: string = "File not uploaded .";
+      return next(new HttpException(httpStatus.INTERNAL_SERVER_ERROR, message));
     }
   };
 }
