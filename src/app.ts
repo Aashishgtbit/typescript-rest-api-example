@@ -4,6 +4,7 @@ import * as morgan from "morgan";
 import userRoutes from "./routes/user.routes";
 import postRoutes from "./routes/posts.routes";
 // import imageRoutes from "./routes/images.routes";
+// import postWithId from "./routes/posts.routeswithid";
 import "dotenv/config";
 import * as mongoose from "mongoose";
 import errorMiddleware from "./middleware/error.middleware";
@@ -33,6 +34,8 @@ class App {
   private initializeControllers() {
     this.app.use("/user/", userRoutes);
     this.app.use("/posts/", postRoutes);
+    // this.app.use("/posts/", postWithId);
+
     // this.app.use("/uploadImages", imageRoutes);
   }
 

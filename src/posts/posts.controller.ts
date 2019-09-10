@@ -24,6 +24,8 @@ class PostsController {
     next: express.NextFunction
   ) => {
     try {
+
+      console.log("get all post called .")
       const res = await this.post.find();
       //check if the res Array is empty
       if (res.length == 0) {
@@ -55,7 +57,9 @@ class PostsController {
     response: express.Response,
     next: express.NextFunction
   ) => {
-    const id = request.params.id;
+    console.log("*********");
+    const id = request.query.id;
+    console.log(id);
     try {
       const res = await this.post.findById(id);
       if (res) {
@@ -80,7 +84,7 @@ class PostsController {
     response: express.Response,
     next: express.NextFunction
   ) => {
-    const id = request.params.id;
+    const id = request.query.id;
     const postData: Post = request.body;
     try {
       const res = await this.post.findByIdAndUpdate(id, postData, {
@@ -130,7 +134,7 @@ class PostsController {
     response: express.Response,
     next: express.NextFunction
   ) => {
-    const id = request.params.id;
+    const id = request.query.id;
     try {
       const res = await this.post.findByIdAndDelete(id);
       if (res) {
